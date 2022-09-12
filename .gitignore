@@ -1,0 +1,5 @@
+*.pyc
+/login/data/
+/download/
+/exports/
+/test/

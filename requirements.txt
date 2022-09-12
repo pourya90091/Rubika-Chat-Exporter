@@ -1,0 +1,2 @@
+selenium
+webdriver-manager==3.8.3
