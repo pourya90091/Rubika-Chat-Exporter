@@ -4,6 +4,12 @@
 
 ## Setup and Run
 
+### Clone
+
+```bash
+git clone --branch master https://github.com/pourya90091/Rubika-Chat-Exporter.git
+```
+
 ### Install Requirements
 
 ```bash
