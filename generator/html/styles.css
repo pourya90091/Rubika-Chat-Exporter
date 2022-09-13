@@ -1,0 +1,128 @@
+/* Main styles and fonts */
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto";
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+a {
+  text-decoration: none;
+}
+
+li {
+  list-style: none;
+}
+
+/* Message styles */
+
+.message {
+  width: 100%;
+  min-height: 70px;
+  margin-top: 20px;
+}
+
+.message-body {
+  padding: 10px;
+  float: left;
+  border-radius: 20px;
+  min-width: 150px;
+  max-width: 50%;
+}
+
+.message-text {
+  direction: rtl;
+  text-align: right;
+  color: white;
+  margin-top: 6px;
+  margin-bottom: 4px;
+  word-break: break-all;
+}
+
+.message-time {
+  font-size: 12px;
+}
+
+.message-uname {
+  font-weight: 500;
+}
+
+/* Message style for specific side */
+
+.message-right {
+  float: right;
+  margin-right: 10px;
+  background-color: rgb(8, 131, 99);
+}
+
+.message-left {
+  float: left;
+  margin-left: 10px;
+  background-color: rgb(110, 110, 110);
+}
+
+.message-right > p.message-time {
+  color: rgb(137, 193, 178);
+}
+
+.message-right > p.message-uname {
+  color: rgb(184, 214, 206);
+  text-align: right;
+}
+
+.message-left > p.message-time {
+  color: rgb(175, 174, 174);
+  text-align: right;
+}
+
+.message-left > p.message-uname {
+  color: rgb(222, 222, 222);
+}
+
+/* Styles for reply box */
+
+.reply-box {
+  border-radius: 3px;
+  margin-top: 10px;
+  height: 50px;
+}
+
+.reply-box > a {
+  padding-top: 5px;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+
+.reply-box > a > p {
+  margin: 0 5px;
+}
+
+.reply-box-uname {
+  font-size: 14px;
+  color: rgb(203, 203, 203);
+  font-weight: 600;
+}
+
+.reply-box-text {
+  color: rgb(222, 222, 222);
+  text-align: right;
+}
+
+/* Styles for reply box on specific side */
+
+.message-left > .reply-box {
+  border-left: 3px solid white;
+  background-color: rgb(122, 122, 122);
+}
+
+.message-right > div.reply-box {
+  border-right: 3px solid rgb(100, 184, 162);
+  background-color: rgb(14, 145, 110);
+}
