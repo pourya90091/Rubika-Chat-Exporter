@@ -1,6 +1,7 @@
-from initialize import driver, base_url
+from initialize import driver, base_url, location
 from CDP.initialize import CDP_initialize
 from core.core import get_all_chats, get_chat_history, save_chats
+from generator.html.core.html_generator import generate_html
 from login.login import login
 from utils.utils import runtime_counter
 
@@ -14,6 +15,8 @@ def main():
     chat_history = get_chat_history(all_chats)
 
     save_chats(chat_history)
+
+    generate_html(location)
 
 if __name__ == "__main__":
     try:
