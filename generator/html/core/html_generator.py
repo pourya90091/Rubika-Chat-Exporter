@@ -1,5 +1,6 @@
 from initialize import base_dir, chat_exports_dir
 from generator.html.core.variables import message_body, relpy_box
+from utils.utils import log_progress
 from os import mkdir, listdir
 from os.path import isdir
 from shutil import copy
@@ -30,9 +31,11 @@ def generate_html(location):
         with open(f"{chat_exports_dir}/{file_path}", "r", encoding="utf-8") as file:
             chat_history = load(file)
 
+        total_indexes = len(chat_history["messages"]) - 1
         conatiners = ""
         for message in chat_history["messages"]:
             conatiners += bind_message(message)
+            log_progress(chat_history["messages"].index(message), total_indexes, prefix="Progress:", suffix="Complete", decimals=2, auto_size=True)
 
         html = sub(r'(<ul id="messages">)(</ul>)', rf'\g<1>{conatiners}\g<2>', html)
 
