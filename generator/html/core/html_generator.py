@@ -19,13 +19,13 @@ def generate_html(location):
     if not isdir(css_export_dir):
         mkdir(css_export_dir)
 
-    with open(f"{base_dir}/generator/html/template.html", "r") as file:
-        html = file.read()
-
     file_paths = listdir(location)
     for file_path in file_paths:
         if file_path == "html":
             continue
+
+        with open(f"{base_dir}/generator/html/template.html", "r") as file:
+            html = file.read()
 
         with open(f"{chat_exports_dir}/{file_path}", "r", encoding="utf-8") as file:
             chat_history = load(file)
@@ -37,7 +37,7 @@ def generate_html(location):
         html = sub(r'(<ul id="messages">)(</ul>)', rf'\g<1>{conatiners}\g<2>', html)
 
         current_location = f"{html_export_dir}/chat_history_{file_paths.index(file_path) + 1}.html"
-        with open(current_location, "w") as file:
+        with open(current_location, "w", encoding="utf-8") as file:
             file.write(html)
 
     copy(f"{base_dir}/generator/html/styles.css", f"{css_export_dir}/styles.css")
@@ -81,16 +81,12 @@ def bind_message(message: dict) -> str:
         current_relpy_box = sub(r'(<div class="reply-box" href="#)(">)', rf'\g<1>{message["reply_to_message_id"]}\g<2>', relpy_box)
         current_relpy_box = sub(r'(<a href="#)(">)', rf'\g<1>{message["reply_to_message_id"]}\g<2>', current_relpy_box)
 
-        if message["sender"]:
-            if not message["sender"] == "you":
-                current_relpy_box = sub(r'(<p class="reply-box-uname">)(</p>)', r'\g<1>You\g<2>', current_relpy_box)
-            else:
-                for msg in chat_history["messages"]:
-                    if msg["id"] == reply_to_message_id:
-                        current_relpy_box = sub(r'(<p class="reply-box-uname">)(</p>)', rf'\g<1>{msg["sender"]}\g<2>', current_relpy_box)
-                        break
-                else:
-                    current_relpy_box = sub(r'(<p class="reply-box-uname">)(</p>)', rf'\g<1>Unknown\g<2>', current_relpy_box)
+        for msg in chat_history["messages"]:
+            if msg["id"] == reply_to_message_id:
+                current_relpy_box = sub(r'(<p class="reply-box-uname">)(</p>)', rf'\g<1>{msg["sender"]}\g<2>', current_relpy_box)
+                break
+        else:
+            current_relpy_box = sub(r'(<p class="reply-box-uname">)(</p>)', rf'\g<1>Unknown\g<2>', current_relpy_box)
 
         current_relpy_box = sub(r'(<p class="reply-box-text">)(</p>)', rf'\g<1>...\g<2>', current_relpy_box)
 
