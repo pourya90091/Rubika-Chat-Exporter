@@ -1,4 +1,4 @@
-from initialize import base_dir, chat_exports_dir
+from initialize import base_dir
 from generator.html.core.variables import message_body, relpy_box
 from utils.utils import log_progress
 from os import mkdir, listdir
@@ -28,7 +28,7 @@ def generate_html(location):
         with open(f"{base_dir}/generator/html/template.html", "r") as file:
             html = file.read()
 
-        with open(f"{chat_exports_dir}/{file_path}", "r", encoding="utf-8") as file:
+        with open(f"{location}/{file_path}", "r", encoding="utf-8") as file:
             chat_history = load(file)
 
         total_indexes = len(chat_history["messages"]) - 1
