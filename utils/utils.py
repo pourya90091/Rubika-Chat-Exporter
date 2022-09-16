@@ -91,12 +91,15 @@ def log_progress(iteration, total, prefix="", suffix="", decimals=1, length=100,
         print()
 
 
-def log_loading(i, text="", character=".", count=3, prefix=""):
-    print(f"{prefix}{text}{i * character}{count * ' '}\r", end="\r")
+def log_loading(i, text="", character=".", count=3, prefix="", completed=False):
+    if not completed:
+        print(f"{prefix}{text}{i * character}{count * ' '}\r", end="\r")
 
-    if i == count:
-        i = 1
+        if i == count:
+            i = 1
+        else:
+            i += 1
+
+        return i
     else:
-        i += 1
-
-    return i
+        print()
