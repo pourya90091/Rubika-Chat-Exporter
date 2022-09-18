@@ -85,13 +85,27 @@ def bind_message(message: dict) -> str:
         current_relpy_box = sub(r'(<a href="#)(">)', rf'\g<1>{message["reply_to_message_id"]}\g<2>', current_relpy_box)
 
         for msg in chat_history["messages"]:
-            if msg["id"] == reply_to_message_id:
-                current_relpy_box = sub(r'(<p class="reply-box-uname">)(</p>)', rf'\g<1>{msg["sender"]}\g<2>', current_relpy_box)
-                break
+            try:
+                if msg["id"] == reply_to_message_id:
+                    current_relpy_box = sub(r'(<p class="reply-box-uname">)(</p>)', rf'\g<1>{msg["sender"]}\g<2>', current_relpy_box)
+                    break
+            except:
+                continue
         else:
             current_relpy_box = sub(r'(<p class="reply-box-uname">)(</p>)', rf'\g<1>Unknown\g<2>', current_relpy_box)
 
-        current_relpy_box = sub(r'(<p class="reply-box-text">)(</p>)', rf'\g<1>...\g<2>', current_relpy_box)
+        for msg in chat_history["messages"]:
+            try:
+                if msg["id"] == reply_to_message_id:
+                    if len(msg["text"]) > len(message["text"]):
+                        msg["text"] = msg["text"][:len(message["text"]) - 3] + "..."
+
+                    current_relpy_box = sub(r'(<p class="reply-box-text">)(</p>)', rf'\g<1>{msg["text"]}\g<2>', current_relpy_box)
+                    break
+            except:
+                continue
+        else:
+            current_relpy_box = sub(r'(<p class="reply-box-text">)(</p>)', rf'\g<1>...\g<2>', current_relpy_box)
 
         current_message_body = sub(pattern, rf'\g<1>{current_relpy_box}\g<3>', current_message_body, flags=MULTILINE)
     if text: current_message_body = sub(r'(<p class="message-text">)(</p>)', rf'\g<1>{message["text"]}\g<2>', current_message_body)
