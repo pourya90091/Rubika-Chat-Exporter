@@ -47,36 +47,37 @@ def generate_html(location):
 
 
 def bind_message(message: dict) -> str:
-    try: message_id = message["id"]
-    except: message_id = None
+    try: message["id"]
+    except: message["id"] = None
 
-    try: date = message["date"]
-    except: date = None
+    try: message["date"]
+    except: message["date"] = None
 
-    try: clock = message["clock"]
-    except: clock = None
+    try: message["clock"]
+    except: message["clock"] = None
 
-    try: sender_name = message["sender"]
-    except: sender_name = None
+    try: message["sender"]
+    except: message["sender"] = None
 
-    try: reply_to_message_id = message["reply_to_message_id"]
-    except: reply_to_message_id = None
+    try: message["reply_to_message_id"]
+    except: message["reply_to_message_id"] = None
 
-    try: text = message["text"]
-    except: text = None
+    try: message["text"]
+    except: message["text"] = None
 
     current_message_body = ""
 
-    if message_id: current_message_body = sub(r'(<li class="message" id=")(">)', rf'\g<1>{message["id"]}\g<2>', message_body)
-    if date: pass
-    if clock: current_message_body = sub(r'(<p class="message-time">)(</p>)', rf'\g<1>{message["clock"]}\g<2>', current_message_body)
-    if sender_name:
-        current_message_body = sub(r'(<p class="message-uname">)(</p>)', rf'\g<1>{message["sender"]}\g<2>', current_message_body)
-        if message["sender"] == "you":
-            current_message_body = sub(r'(<div class="message-body)(">)', r'\g<1> message-right\g<2>', current_message_body)
-        else:
-            current_message_body = sub(r'(<div class="message-body)(">)', r'\g<1> message-left\g<2>', current_message_body)
-    if reply_to_message_id:
+    current_message_body = sub(r'(<li class="message" id=")(">)', rf'\g<1>{message["id"]}\g<2>', message_body)
+    # current_message_body = 
+    current_message_body = sub(r'(<p class="message-time">)(</p>)', rf'\g<1>{message["clock"]}\g<2>', current_message_body)
+    current_message_body = sub(r'(<p class="message-uname">)(</p>)', rf'\g<1>{message["sender"]}\g<2>', current_message_body)
+
+    if message["sender"] == "you":
+        current_message_body = sub(r'(<div class="message-body)(">)', r'\g<1> message-right\g<2>', current_message_body)
+    else:
+        current_message_body = sub(r'(<div class="message-body)(">)', r'\g<1> message-left\g<2>', current_message_body)
+
+    if message["reply_to_message_id"]:
         pattern = r"""(^      <li class="message" id=".*">
         <div class="message-body (message-right|message-left)">
           <p class="message-uname">.*</p>\n)(\n.+\n.+\n.+\n.+$)"""
@@ -86,7 +87,7 @@ def bind_message(message: dict) -> str:
 
         for msg in chat_history["messages"]:
             try:
-                if msg["id"] == reply_to_message_id:
+                if msg["id"] == message["reply_to_message_id"]:
                     current_relpy_box = sub(r'(<p class="reply-box-uname">)(</p>)', rf'\g<1>{msg["sender"]}\g<2>', current_relpy_box)
                     break
             except:
@@ -96,7 +97,7 @@ def bind_message(message: dict) -> str:
 
         for msg in chat_history["messages"]:
             try:
-                if msg["id"] == reply_to_message_id:
+                if msg["id"] == message["reply_to_message_id"]:
                     if len(msg["text"]) > len(message["text"]):
                         msg["text"] = msg["text"][:len(message["text"]) - 3] + "..."
 
@@ -108,6 +109,7 @@ def bind_message(message: dict) -> str:
             current_relpy_box = sub(r'(<p class="reply-box-text">)(</p>)', rf'\g<1>...\g<2>', current_relpy_box)
 
         current_message_body = sub(pattern, rf'\g<1>{current_relpy_box}\g<3>', current_message_body, flags=MULTILINE)
-    if text: current_message_body = sub(r'(<p class="message-text">)(</p>)', rf'\g<1>{message["text"]}\g<2>', current_message_body)
+
+    current_message_body = sub(r'(<p class="message-text">)(</p>)', rf'\g<1>{message["text"]}\g<2>', current_message_body)
 
     return current_message_body
