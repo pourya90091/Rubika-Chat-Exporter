@@ -30,7 +30,7 @@ def wastetime_counter(func):
 
 
 def hash_key(key):
-    if key == "":
+    if key == "" or key is None:
         return key
 
     preFix = "#90091"
