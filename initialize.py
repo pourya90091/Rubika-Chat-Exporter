@@ -109,6 +109,7 @@ else:
     options.add_argument("--media-cache-size=1")
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
     # options.add_experimental_option("prefs", {"download.default_directory": rf"{base_dir}\download"})
+    options.page_load_strategy = "normal"
 
     driver = webdriver.Chrome(service=service, options=options)
     # chrome_configure_experimental_flags()
