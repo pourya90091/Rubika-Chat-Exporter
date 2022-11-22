@@ -80,13 +80,22 @@ def get_profile():
 
 
 def save_login_data():
+    sleep(time_out)
+
     auth = driver.execute_script("return localStorage.getItem('auth');")
     profile = driver.execute_script("return localStorage.getItem('profile');")
 
+    if auth is None or profile is None:
+        print("\nLogin data was not saved")
+    else:
+        print("\nLogin data was saved")
+
     with open(f"{login_data_dir}/auth.txt", "w") as file:
-        file.write(hash_key(auth))
+        if auth:
+            file.write(hash_key(auth))
     with open(f"{login_data_dir}/profile.txt", "w") as file:
-        file.write(hash_key(profile))
+        if profile:
+            file.write(hash_key(profile))
 
 
 def open_chat():
