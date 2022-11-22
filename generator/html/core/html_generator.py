@@ -4,6 +4,7 @@ from utils.utils import log_progress
 from os import mkdir, listdir
 from os.path import isdir
 from shutil import copy
+from textwrap import shorten
 from re import sub, MULTILINE
 from json import load
 
@@ -98,8 +99,7 @@ def bind_message(message: dict) -> str:
         for msg in chat_history["messages"]:
             try:
                 if msg["id"] == message["reply_to_message_id"]:
-                    if len(msg["text"]) > len(message["text"]):
-                        msg["text"] = msg["text"][:len(message["text"]) - 3] + "..."
+                    msg["text"] = shorten(msg["text"], width=50, placeholder="...")
 
                     current_relpy_box = sub(r'(<p class="reply-box-text">)(</p>)', rf'\g<1>{msg["text"]}\g<2>', current_relpy_box)
                     break
