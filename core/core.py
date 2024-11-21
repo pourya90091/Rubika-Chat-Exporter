@@ -280,7 +280,7 @@ def bind_message(chat, chat_data):
     try: date = get_date(chat)
     except: date = None
 
-    try: clock = chat_data.find_element("xpath", ".//span[contains(@class, 'time rbico') and @title]").text
+    try: clock = chat_data.find_element("xpath", ".//span[contains(@class, 'time rbico') and @rb-message-time]").text
     except: clock = None
 
     try:
