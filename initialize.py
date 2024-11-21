@@ -14,7 +14,7 @@ base_url = "https://web.rubika.ir"
 chat_exports_dir = f"{base_dir}/exports"
 login_data_dir = f"{base_dir}/login/data"
 
-chat_box_xpath = "//div[contains(@class, 'bubbles-inner')]"
+chat_box_xpath = "//div[contains(@class, 'bubbles-inner')]//div[@class='bubbles-group']"
 folders_container_xpath = "//div[@anim-tab='all_chats']/ul[@class='chatlist']"
 replied_message_xpath = f"{chat_box_xpath}/div[@rb-observer]/div[contains(@class, 'is-highlighted')]"
 

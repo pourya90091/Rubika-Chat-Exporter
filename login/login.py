@@ -180,7 +180,9 @@ def logged_in():
 
 def get_last_folder():
     try:
-        last_folder = driver.find_element("xpath", f"{folders_container_xpath}/li[last()]")
+        last_folder = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located(("xpath", f"{folders_container_xpath}/li[last()]"))
+        )
     except:
         return None
     else:

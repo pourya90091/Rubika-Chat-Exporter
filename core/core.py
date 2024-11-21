@@ -77,7 +77,7 @@ def get_all_chats_length():
 
     def get_current_chat_history(all_chats):
         if removed_to_date_useless_chats:
-            all_chats = driver.find_elements("xpath", f"{chat_box_xpath}/div[@rb-observer]") # New all_chats
+            all_chats = driver.find_elements("xpath", f"{chat_box_xpath}") # New all_chats
 
         chat_history = get_chat_history(all_chats[1:])
         save_chats(chat_history)
@@ -94,7 +94,7 @@ def get_all_chats_length():
         else:
             get_current_chat_history(all_chats)
 
-    all_chats = driver.find_elements("xpath", f"{chat_box_xpath}/div[@rb-observer]")
+    all_chats = driver.find_elements("xpath", f"{chat_box_xpath}")
 
     all_chats_length = len(all_chats)
     if all_chats_length >= overload:
@@ -114,7 +114,7 @@ def get_all_chats_length():
 def remove_all_useless_chats(useless_chats):
     i = 1
     for chat in useless_chats:
-        remove_element(f"{chat_box_xpath}/div[@rb-observer and @data-msg-id='{chat.get_attribute('data-msg-id')}']")
+        remove_element(f"{chat_box_xpath}/div[class='bubbles-group' and @data-msg-id='{chat.get_attribute('data-msg-id')}']")
         i = log_loading(i, "Removing all useless chats")
     else:
         print("\nAll useless chats removed")
@@ -124,11 +124,11 @@ def remove_to_date_useless_chats():
     global removed_to_date_useless_chats
 
     if to_date == present:
-        useless_chats = driver.find_elements("xpath", f"{chat_box_xpath}/div[@rb-observer]/div[@class='bubble service is-date']//span[substring-after(text(), '، ') = '{to_date}']/ancestor::div[@rb-observer]/following-sibling::div")
+        useless_chats = driver.find_elements("xpath", f"{chat_box_xpath}/div[@class='bubble service is-date']//span[substring-after(text(), '، ') = '{to_date}']/ancestor::div[class='bubbles-group']/following-sibling::div")
 
         i = 1
         for chat in useless_chats:
-            remove_element(f"{chat_box_xpath}/div[@rb-observer and @data-msg-id='{chat.get_attribute('data-msg-id')}']")
+            remove_element(f"{chat_box_xpath}/div[class='bubbles-group' and @data-msg-id='{chat.get_attribute('data-msg-id')}']")
             i = log_loading(i, "Removing to date useless chats")
         else:
             removed_to_date_useless_chats = True
@@ -149,7 +149,7 @@ def get_first_chat(head=False):
         if head:
             first_chat = driver.find_element("xpath", f"{chat_box_xpath}/div[1]")
         else:
-            first_chat = driver.find_element("xpath", f"({chat_box_xpath}/div[@rb-observer]/div[@class='bubble service is-date']/..)[1]/following-sibling::div[1]")
+            first_chat = driver.find_element("xpath", f"({chat_box_xpath})[1]")
     except:
         return None
     else:
@@ -157,21 +157,18 @@ def get_first_chat(head=False):
 
 
 def get_date(chat):
-    all_chat_elements = chat.find_elements("xpath", "./div")
-    if len(all_chat_elements) >= 2:
-        try:
-            date = chat.find_element("xpath", "./div[@class='bubble service is-date']//span")
-            date = findall(r"^.*، (.*)$", date.text)[0]
-        except:
-            return None
-        else:
-            return date
-    else:
+    try:
+        date = chat.find_element("xpath", "./../../div[@class='bubble service is-date']//span")
+        date = findall(r"^.*، (.*)$", date.text)[0]
+    except Exception as err:
         return None
+    else:
+        return date
+
 
 
 def get_dates():
-    date_elements = driver.find_elements("xpath", f"{chat_box_xpath}/div[@rb-observer]/div[@class='bubble service is-date']//span")
+    date_elements = driver.find_elements("xpath", "//div[@class='bubble service is-date']//span")
     if not date_elements:
         raise Exception("The chat box is not loaded or empty")
 
@@ -219,19 +216,19 @@ def get_all_chats(ID):
     all_chats = []
     if from_date == "the oldest message":
         loaded_all_chats = load_all_chats()
-        all_chats = driver.find_elements("xpath", f"{chat_box_xpath}/div[@rb-observer]")
+        all_chats = driver.find_elements("xpath", f"{chat_box_xpath}")
     
         if not removed_to_date_useless_chats: # It also means "if not overloaded"
             if to_date != "present":
-                to_date_all_chats = driver.find_elements("xpath", f"{chat_box_xpath}/div[@rb-observer]/div[@class='bubble service is-date']//span[substring-after(text(), '، ') = '{to_date}']/ancestor::div[@rb-observer]/preceding-sibling::div")
+                to_date_all_chats = driver.find_elements("xpath", f"{chat_box_xpath}/div[@class='bubble service is-date']//span[substring-after(text(), '، ') = '{to_date}']/ancestor::div[class='bubbles-group']/preceding-sibling::div")
                 all_chats = to_date_all_chats
     else:
         loaded_all_chats = load_limited_chats(from_date)
-        from_date_all_chats = driver.find_elements("xpath", f"{chat_box_xpath}/div[@rb-observer]/div[@class='bubble service is-date']//span[substring-after(text(), '، ') = '{from_date}']/ancestor::div[@rb-observer]/preceding-sibling::div[1]/following-sibling::div")
+        from_date_all_chats = driver.find_elements("xpath", f"{chat_box_xpath}/div[@class='bubble service is-date']//span[substring-after(text(), '، ') = '{from_date}']/ancestor::div[class='bubbles-group']/preceding-sibling::div[1]/following-sibling::div")
 
         if not removed_to_date_useless_chats:
             if to_date == present:
-                to_date_all_chats = driver.find_elements("xpath", f"{chat_box_xpath}/div[@rb-observer]/div[@class='bubble service is-date']//span[substring-after(text(), '، ') = '{to_date}']/ancestor::div[@rb-observer]/preceding-sibling::div")
+                to_date_all_chats = driver.find_elements("xpath", f"{chat_box_xpath}/div[@class='bubble service is-date']//span[substring-after(text(), '، ') = '{to_date}']/ancestor::div[class='bubbles-group']/preceding-sibling::div")
 
                 i = 1
                 for chat in from_date_all_chats:
@@ -260,7 +257,7 @@ def get_chat_history(all_chats):
         finally:
             current_index = all_chats.index(chat)
 
-            remove_element(f"{chat_box_xpath}/div[@rb-observer and @data-msg-id='{chat.get_attribute('data-msg-id')}']")
+            remove_element(f"{chat_box_xpath}/div[class='bubbles-group' and @data-msg-id='{chat.get_attribute('data-msg-id')}']")
 
             log_progress(total_indexes - current_index, total_indexes, prefix="Progress:", suffix="Complete", decimals=2, auto_size=True)
 
@@ -302,7 +299,7 @@ def bind_message(chat, chat_data):
                 replied_message = chat_data.find_element("xpath", ".//div[@class='bubble-content']/div[contains(@class, 'reply')]")
                 replied_message.click()
 
-                reply_to_message_id = driver.find_element("xpath", f"{replied_message_xpath}/parent::div[@rb-observer]").get_attribute("data-msg-id")
+                reply_to_message_id = driver.find_element("xpath", f"{replied_message_xpath}/parent::div[class='bubbles-group']").get_attribute("data-msg-id")
 
                 remove_class(replied_message_xpath, "is-highlighted")
             else:
