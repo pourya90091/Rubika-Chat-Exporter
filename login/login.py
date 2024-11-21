@@ -1,5 +1,7 @@
 from initialize import driver, login_data_dir, chat_box_xpath, folders_container_xpath, phone_number, chat_name, time_out
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from utils.utils import wastetime_counter, hash_key
 from time import sleep
 
@@ -7,8 +9,9 @@ from time import sleep
 def login():
     auth = get_auth()
     profile = get_profile()
+    key = get_key()
 
-    if auth == "" or profile == "":
+    if auth == "" or profile == "" or key == "":
         manual_login()
 
         while True:
@@ -20,11 +23,14 @@ def login():
     else:
         driver.execute_script(f"localStorage.setItem('auth', '{auth}');")
         driver.execute_script(f"localStorage.setItem('profile', '{profile}');")
+        driver.execute_script(f"localStorage.setItem('key', '{key}');")
 
         if logged_in() is not True:
             with open(f"{login_data_dir}/auth.txt", "w") as file:
                 file.write("")
             with open(f"{login_data_dir}/profile.txt", "w") as file:
+                file.write("")
+            with open(f"{login_data_dir}/key.txt", "w") as file:
                 file.write("")
 
             login()
@@ -43,15 +49,22 @@ def login():
 
 @wastetime_counter
 def manual_login():
+    phone_number_input_xpath = "//*[@id='auth-pages']/div/div[2]/div[1]/div/div[3]/div[3]/input[1]"
+    verification_code_input_xpath = "//*[@id='auth-pages']/div/div[2]/div[1]/div/div[4]/div/input"
     try:
-        phone_number_input = driver.find_element("xpath", "//*[@id='auth-pages']/div/div[2]/div[1]/div/div[3]/div[3]/input[1]")
+        phone_number_input = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located(("xpath", phone_number_input_xpath))
+        )
         phone_number_input.send_keys(phone_number + Keys.ENTER)
 
         verification_code = input("\nEenter verification code: ")
 
-        verification_code_input = driver.find_element("xpath", "//*[@id='auth-pages']/div/div[2]/div[2]/div/div[4]/div/input")
-        verification_code_input.send_keys(verification_code + Keys.ENTER)
-    except:
+        verification_code_input = WebDriverWait(driver, 10).until(
+            EC.visibility_of_element_located(("xpath", verification_code_input_xpath))
+        )
+        verification_code_input.send_keys(verification_code)
+    except Exception as err:
+        print(err)
         raise Exception("Manual login failed")
 
 
@@ -79,13 +92,26 @@ def get_profile():
         return profile
 
 
+def get_key():
+    try:
+        with open(f"{login_data_dir}/key.txt", "r") as file:
+            key = hash_key(file.read())
+    except FileNotFoundError:
+        with open(f"{login_data_dir}/key.txt", "w") as file:
+            file.write("")
+            key = ""
+    finally:
+        return key
+
+
 def save_login_data():
     sleep(time_out)
 
     auth = driver.execute_script("return localStorage.getItem('auth');")
     profile = driver.execute_script("return localStorage.getItem('profile');")
+    key = driver.execute_script("return localStorage.getItem('key');")
 
-    if auth is None or profile is None:
+    if auth is None or profile is None or key is None:
         print("\nLogin data was not saved")
     else:
         print("\nLogin data was saved")
@@ -96,6 +122,9 @@ def save_login_data():
     with open(f"{login_data_dir}/profile.txt", "w") as file:
         if profile:
             file.write(hash_key(profile))
+    with open(f"{login_data_dir}/key.txt", "w") as file:
+        if key:
+            file.write(hash_key(key))
 
 
 def open_chat():
